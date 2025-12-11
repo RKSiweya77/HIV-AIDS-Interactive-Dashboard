@@ -1,1 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global HIV/AIDS Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-ribbon"></i>
+                    <h1>Global HIV/AIDS Dashboard</h1>
+                </div>
+                <p class="subtitle">Tracking progress towards ending the HIV epidemic</p>
+            </div>
+            <div class="header-stats">
+                <div class="header-stat">
+                    <span class="stat-number" id="global-plhiv">38.4M</span>
+                    <span class="stat-label">People Living with HIV</span>
+                </div>
+                <div class="header-stat">
+                    <span class="stat-number" id="global-art">29.8M</span>
+                    <span class="stat-label">On Antiretroviral Therapy</span>
+                </div>
+            </div>
+        </header>
 
+        <div class="controls-panel">
+            <div class="control-group">
+                <div class="control-item">
+                    <label for="region-select"><i class="fas fa-globe-americas"></i> Region:</label>
+                    <select id="region-select">
+                        <option value="global">Global</option>
+                        <option value="africa">Africa</option>
+                        <option value="asia">Asia & Pacific</option>
+                        <option value="europe">Europe & Central Asia</option>
+                        <option value="americas">Americas</option>
+                        <option value="mena">Middle East & North Africa</option>
+                    </select>
+                </div>
+                
+                <div class="control-item">
+                    <label for="year-select"><i class="fas fa-calendar-alt"></i> Year:</label>
+                    <select id="year-select">
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                        <option value="2019">2019</option>
+                        <option value="2018">2018</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <div class="control-item">
+                    <label><i class="fas fa-filter"></i> Metrics:</label>
+                    <div class="metric-filters">
+                        <button class="metric-btn active" data-metric="prevalence">Prevalence</button>
+                        <button class="metric-btn" data-metric="incidence">Incidence</button>
+                        <button class="metric-btn" data-metric="art">ART Coverage</button>
+                        <button class="metric-btn" data-metric="mortality">Mortality</button>
+                    </div>
+                </div>
+
+                <button id="compare-btn" class="compare-btn">
+                    <i class="fas fa-balance-scale"></i> Compare Regions
+                </button>
+            </div>
+        </div>
+
+        <div class="key-indicators">
+            <div class="indicator-card">
+                <div class="indicator-header">
+                    <i class="fas fa-users"></i>
+                    <h3>HIV Prevalence</h3>
+                </div>
+                <div class="indicator-content">
+                    <div class="indicator-value" id="prevalence-value">0.7%</div>
+                    <div class="indicator-subtitle">Global rate (15-49 years)</div>
+                    <div class="indicator-trend">
+                        <i class="fas fa-arrow-down trend-down"></i>
+                        <span>12% decrease since 2010</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="indicator-card">
+                <div class="indicator-header">
+                    <i class="fas fa-plus-circle"></i>
+                    <h3>New Infections</h3>
+                </div>
+                <div class="indicator-content">
+                    <div class="indicator-value" id="incidence-value">1.3M</div>
+                    <div class="indicator-subtitle">Annual new infections (2022)</div>
+                    <div class="indicator-trend">
+                        <i class="fas fa-arrow-down trend-down"></i>
+                        <span>38% decrease since 2010</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="indicator-card">
+                <div class="indicator-header">
+                    <i class="fas fa-pills"></i>
+                    <h3>ART Coverage</h3>
+                </div>
+                <div class="indicator-content">
+                    <div class="indicator-value" id="art-value">76%</div>
+                    <div class="indicator-subtitle">Of people living with HIV</div>
+                    <div class="indicator-trend">
+                        <i class="fas fa-arrow-up trend-up"></i>
+                        <span>Increased from 7% in 2000</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="indicator-card">
+                <div class="indicator-header">
+                    <i class="fas fa-heartbeat"></i>
+                    <h3>AIDS-related Deaths</h3>
+                </div>
+                <div class="indicator-content">
+                    <div class="indicator-value" id="mortality-value">630,000</div>
+                    <div class="indicator-subtitle">Annual deaths (2022)</div>
+                    <div class="indicator-trend">
+                        <i class="fas fa-arrow-down trend-down"></i>
+                        <span>52% decrease since 2010</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-charts">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h2><i class="fas fa-chart-line"></i> HIV Prevalence Trend (2000-2022)</h2>
+                    <div class="chart-legend">
+                        <span class="legend-item"><div class="legend-color global"></div> Global</span>
+                        <span class="legend-item"><div class="legend-color africa"></div> Africa</span>
+                        <span class="legend-item"><div class="legend-color asia"></div> Asia</span>
+                    </div>
+                </div>
+                <canvas id="trendChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h2><i class="fas fa-chart-pie"></i> Regional Distribution of PLHIV</h2>
+                    <button class="toggle-btn" id="toggle-chart">
+                        <i class="fas fa-exchange-alt"></i> Switch to Map
+                    </button>
+                </div>
+                <canvas id="regionalChart"></canvas>
+                <div id="map-container" class="hidden">
+                    <div class="map-placeholder">
+                        <i class="fas fa-globe-africa"></i>
+                        <p>Interactive Map View</p>
+                        <small>Click on regions to view detailed statistics</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container full-width">
+                <div class="chart-header">
+                    <h2><i class="fas fa-chart-bar"></i> Progress Towards 95-95-95 Targets (2022)</h2>
+                    <div class="target-info">
+                        <span class="target-badge" style="background: #3498db;">95% Diagnosed</span>
+                        <span class="target-badge" style="background: #2ecc71;">95% On Treatment</span>
+                        <span class="target-badge" style="background: #9b59b6;">95% Virally Suppressed</span>
+                    </div>
+                </div>
+                <canvas id="targetsChart"></canvas>
+            </div>
+        </div>
+
+        <div class="data-section">
+            <div class="data-table-container">
+                <h2><i class="fas fa-table"></i> Country-Level HIV Statistics</h2>
+                <div class="table-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="country-search" placeholder="Search countries...">
+                    </div>
+                    <select id="sort-by">
+                        <option value="prevalence">Sort by Prevalence</option>
+                        <option value="incidence">Sort by New Infections</option>
+                        <option value="art">Sort by ART Coverage</option>
+                        <option value="plhiv">Sort by PLHIV</option>
+                    </select>
+                </div>
+                <div class="table-wrapper">
+                    <table id="country-table">
+                        <thead>
+                            <tr>
+                                <th>Country</th>
+                                <th>PLHIV</th>
+                                <th>Prevalence (%)</th>
+                                <th>New Infections</th>
+                                <th>ART Coverage (%)</th>
+                                <th>AIDS Deaths</th>
+                                <th>Progress</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="info-sidebar">
+                <h2><i class="fas fa-info-circle"></i> Key Facts</h2>
+                <div class="fact-card">
+                    <i class="fas fa-female"></i>
+                    <h3>Women & Girls</h3>
+                    <p>53% of all people living with HIV are women and girls</p>
+                </div>
+                <div class="fact-card">
+                    <i class="fas fa-child"></i>
+                    <h3>Children</h3>
+                    <p>1.5 million children (0-14) living with HIV in 2022</p>
+                </div>
+                <div class="fact-card">
+                    <i class="fas fa-syringe"></i>
+                    <h3>Prevention</h3>
+                    <p>PrEP use has increased by 70% since 2020</p>
+                </div>
+                <div class="fact-card">
+                    <i class="fas fa-bullseye"></i>
+                    <h3>90-90-90 Achieved</h3>
+                    <p>14 countries have reached the 90-90-90 targets</p>
+                </div>
+                
+                <div class="data-source">
+                    <h3><i class="fas fa-database"></i> Data Sources</h3>
+                    <ul>
+                        <li><a href="https://www.unaids.org/" target="_blank">UNAIDS Data</a></li>
+                        <li><a href="https://www.who.int/data" target="_blank">WHO Global Health Observatory</a></li>
+                        <li><a href="https://data.unicef.org/" target="_blank">UNICEF Data</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>HIV/AIDS Dashboard</h3>
+                    <p>Interactive visualization of global HIV/AIDS statistics and progress.</p>
+                    <p class="update-info">Last updated: <span id="last-update">December 2023</span></p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="https://www.unaids.org/" target="_blank">UNAIDS</a></li>
+                        <li><a href="https://www.who.int/hiv" target="_blank">WHO HIV Programme</a></li>
+                        <li><a href="https://www.pepfar.gov/" target="_blank">PEPFAR</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p>For data inquiries: <a href="mailto:data@hivdashboard.org">data@hivdashboard.org</a></p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© 2024 Global HIV/AIDS Dashboard. Data sourced from UNAIDS, WHO, and other UN agencies.</p>
+                <p class="github-link">
+                    <i class="fab fa-github"></i> 
+                    <a href="https://github.com/RKSiweya77/HIV-AIDS-Interactive-Dashboard" target="_blank">View Source Code</a>
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
